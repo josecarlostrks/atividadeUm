@@ -1,0 +1,27 @@
+.App {
+  margin: 1rem;
+  font-family: Helvetica, sans-serif;
+}
+
+.nav-titulo {
+  text-weight: bold;
+}
+
+.main-section {
+  width: 40%;
+  padding-bottom: 30%;
+}
+
+.rastreador {
+  padding-left: 0px;
+}
+
+.contato-titulo {
+  font-weight: bold;
+  color: black;
+  padding-top: 5px;
+}
+
+.contato {
+  margin-top: 20px;
+}
