@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 
 function ContatoForm(props) {
   const handleChange = (evt) => {
-    evt.preventDefault();
+    evt.preventDefault();    
     let { name, value } = evt.target;
     props.onContatoChange(name, value);
   };

@@ -1,6 +1,6 @@
 import React from 'react';
 import ContatoForm from "./components/ContatoForm";
-import ContatoEdit from "./components/ContatoEdit";
+import EditForm from "./components/EditForm";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
@@ -15,6 +15,7 @@ function Agenda() {
 
   let [novoContato, setNovoContato] = React.useState({ nome: '', telefone: ''});
   let [contatoEditado, setContatoEditado] = React.useState({ nome: '', telefone: ''});
+  let [lugar, setLugar] = React.useState(0);
 
   const onContatoChange = (name, value) => {
     let contatoCopia = Object.assign({}, novoContato);
@@ -22,6 +23,11 @@ function Agenda() {
 
     setNovoContato(contatoCopia);
   };
+
+  const mudarIndice = (t) =>{
+     setLugar(t);
+  };
+
   const onContatoSelected = (name, value) => {
     let contatoCopia = Object.assign({}, contatoEditado);
     contatoCopia[name] = value;
@@ -36,12 +42,12 @@ function Agenda() {
     setNovoContato({ nome: '', telefone: '' });
   };
 
-  const editarContato = (indice, evt) => {
+  const editarContato = (evt) => {
     let contatosCopia = [...contatos];
     //contatosCopia.push(novoContato);
-    contatosCopia.splice(indice, 1,contatoEditado);
+    contatosCopia.splice(lugar, 1,contatoEditado);
     setContatos(contatosCopia);
-    setNovoContato({ nome: '', telefone: '' });
+    setContatoEditado({ nome: '', telefone: '' });
   };
 
   const excluirContato = (indice, evt) => {
@@ -56,7 +62,7 @@ function Agenda() {
       <Navegacao onContatoChange={onContatoChange} onContatoSubmit={salvarContato}
                  novoContato={novoContato} />
       <Main contatos={contatos} onContatoSelected={onContatoSelected} editarContato={editarContato}
-                 contatoEditado={contatoEditado} excluirContato={excluirContato}/>
+                 contatoEditado={contatoEditado} excluirContato={excluirContato} mudarIndice={mudarIndice}/>
     </React.Fragment>
   );
 }
@@ -85,8 +91,8 @@ function Main(props) {
     <section>
       <div className="container main-section">
         <Rastreador caminho="Contatos" />
-        <Contatos contatos={props.contatos} onContatoSelected={props.onContatoSelected} 
-        editarContato={props.editarContato} contatoEditado={props.contatoEditado} excluirContato={props.excluirContato}/>
+        <Contatos contatos={props.contatos} excluirContato={props.excluirContato}
+        onContatoSelected={props.onContatoSelected}  />
       </div>
     </section>
   );
@@ -107,6 +113,12 @@ function Rastreador(props) {
 
 function Contato(props) {
 
+  
+  const handleChange = (evt) => {
+      evt.preventDefault();
+      let { name, value } = evt.target;
+      props.onContatoSelected(name, value);
+    };
 
   return (
     <div className="card shadow-sm bg-white rounded contato">
@@ -118,12 +130,16 @@ function Contato(props) {
             onClick={()=>props.excluirContato(props.posicao)}>
           Excluir
         </button>
-        <p>{props.posicao}</p>       
+
+        <p>{props.posicao}</p> 
+
         <button type="button" className="btn btn-primary btn-sm" data-toggle="modal"
-            data-target="#editModal">
+        data-target="#editModal" onClick={handleChange}>
           Editar contato
         </button> 
-   
+        <React.Fragment>
+            <EditForm contato={props.contato} />
+        </React.Fragment>
       </div>
     </div>
   );
@@ -133,24 +149,23 @@ function Contato(props) {
 
 function Contatos(props) {
 
+
+
   let listaContatos = props.contatos.map((contato, index) => 
  
     <React.Fragment> 
-    
-        <ContatoEdit contato={contato} key={index} posicao={index} onContatoSelected={props.onContatoSelected} 
-        editarContato={props.editarContato} contatoEditado={props.contatoEditado}/>
 
         <Contato contato={contato} key={index} posicao={index} excluirContato={props.excluirContato}
-        onContatoSelected={props.onContatoSelected} editarContato={props.editarContato} contatoEditado={props.contatoEditado} />       
+        onContatoSelected={props.onContatoSelected}  />       
 
     </React.Fragment>         
 
   ); 
 
   return (
-    	<React.Fragment>
-      		{listaContatos}
-    	</React.Fragment>
+      <React.Fragment>
+          {listaContatos}
+      </React.Fragment>
   );
 }
 

@@ -43654,7 +43654,7 @@ function ContatoForm(props) {
 
 var _default = ContatoForm;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","bootstrap/dist/js/bootstrap.min.js":"../node_modules/bootstrap/dist/js/bootstrap.min.js"}],"components/ContatoEdit.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","bootstrap/dist/js/bootstrap.min.js":"../node_modules/bootstrap/dist/js/bootstrap.min.js"}],"components/EditForm.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -43670,20 +43670,22 @@ require("bootstrap/dist/js/bootstrap.min.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ContatoEdit(props) {
+function EditForm(_ref) {
+  var contato = _ref.contato;
+
   var handleChange = function handleChange(evt) {
     evt.preventDefault();
     var _evt$target = evt.target,
         name = _evt$target.name,
         value = _evt$target.value;
-    props.onContatoSelected(name, value);
+    props.onContatoChange(name, value);
   };
 
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "modal fade",
     id: "editModal",
     tabIndex: "-1",
-    "aria-labelledby": "editModalLabel",
+    "aria-labelledby": "contatoModalLabel",
     "aria-hidden": "true"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-dialog"
@@ -43693,8 +43695,8 @@ function ContatoEdit(props) {
     className: "modal-header"
   }, /*#__PURE__*/_react.default.createElement("h5", {
     className: "modal-title",
-    id: "editModalLabel"
-  }, "Editar contato"), /*#__PURE__*/_react.default.createElement("button", {
+    id: "contatoModalLabel"
+  }, "Criar contato"), /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
     className: "close",
     "data-dismiss": "modal",
@@ -43714,7 +43716,7 @@ function ContatoEdit(props) {
     id: "contato-nome",
     name: "nome",
     onChange: handleChange,
-    value: props.contatoEditado.nome
+    value: contato.nome
   })), /*#__PURE__*/_react.default.createElement("div", {
     className: "mb-3"
   }, /*#__PURE__*/_react.default.createElement("label", {
@@ -43726,20 +43728,21 @@ function ContatoEdit(props) {
     id: "contato-telefone",
     name: "telefone",
     onChange: handleChange,
-    value: props.contatoEditado.telefone
+    value: contato.telefone
   })))), /*#__PURE__*/_react.default.createElement("div", {
     className: "modal-footer"
   }, /*#__PURE__*/_react.default.createElement("button", {
     type: "button",
+    className: "btn btn-secondary",
+    "data-dismiss": "modal"
+  }, "Cancelar"), /*#__PURE__*/_react.default.createElement("button", {
+    type: "button",
     className: "btn btn-primary",
-    "data-dismiss": "modal",
-    onClick: function onClick() {
-      return props.editarContato(props.posicao);
-    }
-  }, "Editar")))));
+    "data-dismiss": "modal"
+  }, "Criar")))));
 }
 
-var _default = ContatoEdit;
+var _default = EditForm;
 exports.default = _default;
 },{"react":"../node_modules/react/index.js","bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","bootstrap/dist/js/bootstrap.min.js":"../node_modules/bootstrap/dist/js/bootstrap.min.js"}],"App.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
@@ -43758,7 +43761,7 @@ var _react = _interopRequireDefault(require("react"));
 
 var _ContatoForm = _interopRequireDefault(require("./components/ContatoForm"));
 
-var _ContatoEdit = _interopRequireDefault(require("./components/ContatoEdit"));
+var _EditForm = _interopRequireDefault(require("./components/EditForm"));
 
 require("bootstrap/dist/css/bootstrap.min.css");
 
@@ -43819,10 +43822,19 @@ function Agenda() {
       contatoEditado = _React$useState6[0],
       setContatoEditado = _React$useState6[1];
 
+  var _React$useState7 = _react.default.useState(0),
+      _React$useState8 = _slicedToArray(_React$useState7, 2),
+      lugar = _React$useState8[0],
+      setLugar = _React$useState8[1];
+
   var onContatoChange = function onContatoChange(name, value) {
     var contatoCopia = Object.assign({}, novoContato);
     contatoCopia[name] = value;
     setNovoContato(contatoCopia);
+  };
+
+  var mudarIndice = function mudarIndice(t) {
+    setLugar(t);
   };
 
   var onContatoSelected = function onContatoSelected(name, value) {
@@ -43842,13 +43854,13 @@ function Agenda() {
     });
   };
 
-  var editarContato = function editarContato(indice, evt) {
+  var editarContato = function editarContato(evt) {
     var contatosCopia = _toConsumableArray(contatos); //contatosCopia.push(novoContato);
 
 
-    contatosCopia.splice(indice, 1, contatoEditado);
+    contatosCopia.splice(lugar, 1, contatoEditado);
     setContatos(contatosCopia);
-    setNovoContato({
+    setContatoEditado({
       nome: '',
       telefone: ''
     });
@@ -43871,7 +43883,8 @@ function Agenda() {
     onContatoSelected: onContatoSelected,
     editarContato: editarContato,
     contatoEditado: contatoEditado,
-    excluirContato: excluirContato
+    excluirContato: excluirContato,
+    mudarIndice: mudarIndice
   }));
 }
 
@@ -43899,10 +43912,8 @@ function Main(props) {
     caminho: "Contatos"
   }), /*#__PURE__*/_react.default.createElement(Contatos, {
     contatos: props.contatos,
-    onContatoSelected: props.onContatoSelected,
-    editarContato: props.editarContato,
-    contatoEditado: props.contatoEditado,
-    excluirContato: props.excluirContato
+    excluirContato: props.excluirContato,
+    onContatoSelected: props.onContatoSelected
   })));
 }
 
@@ -43917,6 +43928,14 @@ function Rastreador(props) {
 }
 
 function Contato(props) {
+  var handleChange = function handleChange(evt) {
+    evt.preventDefault();
+    var _evt$target = evt.target,
+        name = _evt$target.name,
+        value = _evt$target.value;
+    props.onContatoSelected(name, value);
+  };
+
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "card shadow-sm bg-white rounded contato"
   }, /*#__PURE__*/_react.default.createElement("div", {
@@ -43935,27 +43954,21 @@ function Contato(props) {
     type: "button",
     className: "btn btn-primary btn-sm",
     "data-toggle": "modal",
-    "data-target": "#editModal"
-  }, "Editar contato")));
+    "data-target": "#editModal",
+    onClick: handleChange
+  }, "Editar contato"), /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_EditForm.default, {
+    contato: props.contato
+  }))));
 }
 
 function Contatos(props) {
   var listaContatos = props.contatos.map(function (contato, index) {
-    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ContatoEdit.default, {
-      contato: contato,
-      key: index,
-      posicao: index,
-      onContatoSelected: props.onContatoSelected,
-      editarContato: props.editarContato,
-      contatoEditado: props.contatoEditado
-    }), /*#__PURE__*/_react.default.createElement(Contato, {
+    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(Contato, {
       contato: contato,
       key: index,
       posicao: index,
       excluirContato: props.excluirContato,
-      onContatoSelected: props.onContatoSelected,
-      editarContato: props.editarContato,
-      contatoEditado: props.contatoEditado
+      onContatoSelected: props.onContatoSelected
     }));
   });
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, listaContatos);
@@ -43967,7 +43980,7 @@ function App() {
 
 var _default = App;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./components/ContatoForm":"components/ContatoForm.js","./components/ContatoEdit":"components/ContatoEdit.js","bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","bootstrap/dist/js/bootstrap.min.js":"../node_modules/bootstrap/dist/js/bootstrap.min.js","./App.css":"App.css"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./components/ContatoForm":"components/ContatoForm.js","./components/EditForm":"components/EditForm.js","bootstrap/dist/css/bootstrap.min.css":"../node_modules/bootstrap/dist/css/bootstrap.min.css","bootstrap/dist/js/bootstrap.min.js":"../node_modules/bootstrap/dist/js/bootstrap.min.js","./App.css":"App.css"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireDefault(require("react"));
@@ -44007,7 +44020,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39143" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "46449" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
